@@ -5,10 +5,54 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+
+from scrapy import Item, Field
 
 
-class JobyItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
+class JobItem(Item):
+    website_url = Field()
+    website_language = Field()
+
+    publication_date = Field()
+    posting_id = Field()
+    url = Field()
+    number_of_views = Field()
+
+    contact_email = Field()
+    contact_name = Field()
+
+    employment_type = Field()
+    workload = Field()
+    duration = Field()
+    remote = Field()
+
+    title = Field(primary_key=True)
+    keywords = Field()
+    abstract = Field()
+    description = Field()
+
+    salary = Field()
+    level = Field()
+
+    responsabilities = Field()
+    required_skills = Field()
+    required_languages = Field()
+
+    company = Field(primary_key=True)
+    city = Field()
+    country = Field()
+    postal_code = Field()
+
+    company_website = Field()
+    company_category = Field()
+    company_description = Field()
+
+    start_date = Field()
+    end_date = Field()
+
+
+class DataScienceJobsJobItem(Job):
     pass
+
+
+
