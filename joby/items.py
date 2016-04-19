@@ -7,6 +7,8 @@
 
 
 from scrapy import Item, Field
+from scrapy.loader import Identity, ItemLoader
+from scrapy.loader.processors import TakeFirst
 
 
 class JobItem(Item):
@@ -51,8 +53,14 @@ class JobItem(Item):
     end_date = Field()
 
 
-class DataScienceJobsJobItem(Job):
+class DataScienceJobsJobItem(JobItem):
     pass
 
 
+class JobItemLoader(ItemLoader):
+    default_input_processor = Identity()
+    default_output_processor = TakeFirst()
 
+
+class DataScienceJobsItemLoader(JobItemLoader):
+    pass
