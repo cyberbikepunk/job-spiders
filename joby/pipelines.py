@@ -6,6 +6,22 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
 
-class JobyPipeline(object):
-    def process_item(self, item, spider):
-        return item
+from json import dumps
+from logging import getLogger
+from settings import JSON_BUCKET
+
+
+class JsonWriterPipeline(object):
+    def __init__(self):
+        self.file = open(JSON_BUCKET, 'wb')
+        self.log = getLogger(__name__)
+
+    def process_item(self, job, spider):
+        line = dumps(dict(job)) + '\n'
+        self.file.write(line)
+
+        self.log.info('Writing %s (%s) from %s to json',
+                      job['title'],
+                      job['company'],
+                      spider)
+        return job

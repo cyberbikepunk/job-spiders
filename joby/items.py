@@ -22,11 +22,13 @@ class JobItem(Item):
 
     contact_email = Field()
     contact_name = Field()
+    contact_phone = Field()
 
-    employment_type = Field()
+    job_category = Field()
+    job_type = Field()
     workload = Field()
     duration = Field()
-    remote = Field()
+    allows_remote = Field()
 
     title = Field(primary_key=True)
     keywords = Field()
@@ -53,8 +55,8 @@ class JobItem(Item):
     end_date = Field()
 
 
-class DataScienceJobsJobItem(JobItem):
-    pass
+class DataScienceJob(JobItem):
+    days_since_published = Field()
 
 
 class JobItemLoader(ItemLoader):
@@ -62,5 +64,5 @@ class JobItemLoader(ItemLoader):
     default_output_processor = TakeFirst()
 
 
-class DataScienceJobsItemLoader(JobItemLoader):
+class DataScienceJobsLoader(JobItemLoader):
     pass
