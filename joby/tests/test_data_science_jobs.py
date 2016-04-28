@@ -1,9 +1,8 @@
 """ Test the data_science_jobs spider. """
 
 
-from joby.items import DataScienceJobsLoader, DataScienceJob
+from joby.items import DataScienceJobsLoader, JobItem
 from joby.spiders.data_science_jobs import DataScienceJobsSpider
-from mock import Mock
 
 
 def test_parse_overview_table_():
@@ -62,17 +61,13 @@ def test_parse_overview_table_():
     fields = {
         'job_category': 'Business Analyst',
         'contact_phone': '08954459111',
-        'job_id': 'OZA282636',
+        'reference_id': 'OZA282636',
         'days_since_posted': '178 days',
         'salary': '70000&nbsp;EUR',
-        'job_type': 'Employee',
+        'contract_type': 'Employee',
         'workload': 'full-time',
         'allows_remote': 'negotiable',
         'duration': 'unlimited',
     }
 
-    spider = DataScienceJobsSpider()
-    spider.response.text = html_table
-    loader = DataScienceJobsLoader(item=DataScienceJob(), response=response)
-
-    assert DataScienceJobsSpider().parse_job_overview_table() == fields
+    assert False

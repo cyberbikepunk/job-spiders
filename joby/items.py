@@ -12,25 +12,26 @@ from scrapy.loader.processors import TakeFirst
 
 
 class JobItem(Item):
-    website_url = Field()
+    website_url = Field(hash=True)
     website_language = Field()
 
     publication_date = Field()
-    posting_id = Field()
-    url = Field()
+    days_since_posted = Field()
+    reference_id = Field()
     number_of_views = Field()
 
     contact_email = Field()
-    contact_name = Field()
+    contact_person = Field()
     contact_phone = Field()
+    apply_url = Field()
 
     job_category = Field()
-    job_type = Field()
+    contract_type = Field()
     workload = Field()
     duration = Field()
     allows_remote = Field()
 
-    title = Field(primary_key=True)
+    job_title = Field(hash=True)
     keywords = Field()
     abstract = Field()
     description = Field()
@@ -42,21 +43,17 @@ class JobItem(Item):
     required_skills = Field()
     required_languages = Field()
 
-    company = Field(primary_key=True)
     city = Field()
     country = Field()
     postal_code = Field()
 
+    company_name = Field()
     company_website = Field()
     company_category = Field()
     company_description = Field()
 
     start_date = Field()
     end_date = Field()
-
-
-class DataScienceJob(JobItem):
-    days_since_published = Field()
 
 
 class JobItemLoader(ItemLoader):
