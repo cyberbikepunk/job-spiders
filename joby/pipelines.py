@@ -19,9 +19,5 @@ class JsonWriterPipeline(object):
     def process_item(self, job, spider):
         line = dumps(dict(job)) + '\n'
         self.file.write(line)
-
-        self.log.info('Writing %s (%s) from %s to json',
-                      job['title'],
-                      job['company'],
-                      spider)
+        self.log.info('Writing a job from %s to json', spider.name)
         return job
