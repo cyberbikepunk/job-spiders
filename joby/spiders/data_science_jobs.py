@@ -5,12 +5,13 @@ from scrapy.spiders import Rule, CrawlSpider
 from scrapy.linkextractors import LinkExtractor
 from bs4 import BeautifulSoup
 
-from joby.items import DataScienceJobsLoader, JobItem
+from joby.items import JobLoader, Job
 
 
 class DataScienceJobsSpider(CrawlSpider):
     name = 'data-science-jobs'
     log = getLogger(name)
+    parser_engine = 'lxml'
 
     allowed_domains = ['www.data-science-jobs.com']
     start_urls = ['http://www.data-science-jobs.com']
@@ -20,19 +21,31 @@ class DataScienceJobsSpider(CrawlSpider):
 
     def __init__(self, *args, **kwargs):
         super(DataScienceJobsSpider, self).__init__(*args, **kwargs)
+
+        self.xbase = '//div[@id="detailView"]/'
+
         self.response = None
         self.loader = None
+        self.soup = None
 
-    def parse_job_overview_table(self):
-        soup = BeautifulSoup(self.response.body, 'lxml')
-        self.log.debug('Parsing id=detailViewTable from %s', self.response.url)
+    def parse_job(self, response):
+        self.response = response
 
-        table = soup.find('table', class_='detailViewTable')
-        fields_found = map(lambda x: x.text, table.find_all('td', class_='detailViewTableKey'))
-        values_found = map(lambda x: x.text, table.find_all('td', class_='detailViewTableValue'))
+        self.soup = BeautifulSoup(response.body, self.parser_engine)
+        self.loader = JobLoader(item=Job(), response=response)
 
-        rows = dict(zip(fields_found, values_found))
-        fields_expected = {
+        self.parse_job_overview()
+        self.parse_job_details()
+        self.parse_company_info()
+        self.parse_webpage_info()
+
+        self.loader.load_item()
+        self.log.info('Loaded job from %s', response.url)
+        return self.loader.load_item()
+
+    def parse_job_overview(self):
+        table = self.soup.find('table', class_='detailViewTable')
+        overview_fields = {
             'job_category': 'Category',
             'contract_type': 'Type',
             'allows_remote': 'Home Office',
@@ -46,27 +59,59 @@ class DataScienceJobsSpider(CrawlSpider):
             'contact_phone': 'Contact Phone',
         }
 
-        unscraped_fields = set(fields_found) - set(fields_expected.values())
-        if unscraped_fields:
-            self.log.warning('%s fields are not being scraped', list(unscraped_fields))
+        self._parse_table(table, overview_fields)
+        self.log.info('Parsed company details from %s', self.response.url)
 
-        for item_name, item_label in fields_expected.items():
-            if item_label in fields_found:
-                self.loader.add_value(item_name, rows[item_label])
-                self.log.debug('Scraped %s = %s', item_name, rows[item_label])
+    def parse_job_details(self):
+        self.loader.add_xpath('keywords', self.xbase + 'div[4]/div[2]/text()')
+        self.loader.add_xpath('description', self.xbase + 'div[3]/div[2]/text()')
+        self.loader.add_xpath('abstract', self.xbase + 'div[2]/div[2]/p/text()')
+        self.log.info('Parsed job details from %s', self.response.url)
+
+    def parse_company_info(self):
+        table = self.soup.find_all(class_='detailViewTable')[1]
+        company_fields = {
+            'company_name': 'Name',
+            'company_description': 'Description',
+            'company_url': 'Website',
+        }
+        self._parse_table(table, company_fields)
+        self.log.info('Parsed company details from %s', self.response.url)
+
+    def parse_company_address(self):
+        self.loader.add_xpath('company_address', self.xbase + 'div[6]/div[2]/table/tbody/tr/td[1]/address/text()')
+        self.log.info('Parsed company address from %s', self.response.url)
+
+    def parse_webpage_info(self):
+        self.loader.add_xpath('job_title', self.xbase + 'h1/text()')
+        self.loader.add_value('website_url', self.response.url)
+        self.loader.add_value('job_url', self.response.url)
+        self.loader.add_value('website_job_id', self.response.url)
+        self.log.info('Parsed webpage info from %s', self.response.url)
+
+    def _parse_table(self, table, expected_keys):
+        self.log.info('Parsing the job overview table from %s', self.response.url)
+
+        key_tags = table.find_all('td', class_='detailViewTableKey')
+        value_tags = table.find_all('td', class_='detailViewTableValue')
+
+        def extract(tag):
+            if tag.next_element.name == 'a':
+                return tag.next_element.attrs['href']
             else:
-                self.log.debug('%s field is missing', item_name)
+                return tag.text
 
-    def parse_job(self, response):
-        self.response = response
-        self.loader = DataScienceJobsLoader(item=JobItem(), response=response)
-        self.parse_job_overview_table()
-        self.parse_job_description_boxes()
-        self.loader.load_item()
+        keys = map(extract, key_tags)
+        values = map(extract, value_tags)
+        rows = dict(zip(keys, values))
 
-        self.log.info('Loaded job from %s', response.url)
+        unscraped = set(keys) - set(expected_keys.values())
+        if unscraped:
+            self.log.warning('Not scraping %s', list(unscraped))
 
-        return self.loader.load_item()
-
-    def parse_job_description_boxes(self):
-        pass
+        for key, item_label in expected_keys.items():
+            if item_label in keys:
+                self.loader.add_value(key, rows[item_label])
+                self.log.debug('Scraped %s = %s', key, rows[item_label])
+            else:
+                self.log.debug('%s is missing', key)

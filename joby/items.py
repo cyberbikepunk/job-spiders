@@ -11,9 +11,13 @@ from scrapy.loader import Identity, ItemLoader
 from scrapy.loader.processors import TakeFirst
 
 
-class JobItem(Item):
-    website_url = Field(hash=True)
+class Job(Item):
+    website_url = Field(hash_key=True)
     website_language = Field()
+
+    job_url = Field()
+    website_job_id = Field()
+    company_job_id = Field()
 
     publication_date = Field()
     days_since_posted = Field()
@@ -31,7 +35,7 @@ class JobItem(Item):
     duration = Field()
     allows_remote = Field()
 
-    job_title = Field(hash=True)
+    job_title = Field(hash_key=True)
     keywords = Field()
     abstract = Field()
     description = Field()
@@ -43,12 +47,13 @@ class JobItem(Item):
     required_skills = Field()
     required_languages = Field()
 
-    city = Field()
-    country = Field()
-    postal_code = Field()
+    company_address = Field()
+    company_city = Field()
+    company_country = Field()
+    company_zipcode = Field()
 
     company_name = Field()
-    company_website = Field()
+    company_url = Field()
     company_category = Field()
     company_description = Field()
 
@@ -56,10 +61,6 @@ class JobItem(Item):
     end_date = Field()
 
 
-class JobItemLoader(ItemLoader):
+class JobLoader(ItemLoader):
     default_input_processor = Identity()
     default_output_processor = TakeFirst()
-
-
-class DataScienceJobsLoader(JobItemLoader):
-    pass
