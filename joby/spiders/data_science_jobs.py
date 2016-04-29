@@ -46,17 +46,17 @@ class DataScienceJobsSpider(CrawlSpider):
     def parse_job_overview(self):
         table = self.soup.find('table', class_='detailViewTable')
         overview_fields = {
-            'job_category': 'Category',
-            'contract_type': 'Type',
-            'allows_remote': 'Home Office',
-            'salary': 'Min. Budget',
-            'days_since_posted': 'Age',
-            'reference_id': "Reference ID",
-            'apply_url': 'Apply URL',
-            'duration': 'Duration',
-            'workload': 'Workload',
-            'contact_person': "Contact Person",
-            'contact_phone': 'Contact Phone',
+            'Category': 'job_category',
+            'Type': 'contract_type',
+            'Home Office': 'allows_remote',
+            'Min. Budget': 'salary',
+            'Age': 'days_since_posted',
+            'Reference ID': 'reference_id',
+            'Apply URL': 'apply_url',
+            'Duration': 'duration',
+            'Workload': 'workload',
+            'Contact Person': 'contact_person',
+            'Contact Phone': 'contact_phone',
         }
         self._parse_table(table, overview_fields)
         self.log.info('Parsed job overview from %s', self.response.url)
@@ -70,9 +70,9 @@ class DataScienceJobsSpider(CrawlSpider):
     def parse_company_info(self):
         table = self.soup.find_all(class_='detailViewTable')[1]
         company_fields = {
-            'company_name': 'Name',
-            'company_description': 'Description',
-            'company_url': 'Website',
+            'Name': 'company_name',
+            'Description': 'company_description',
+            'Website': 'company_url',
         }
         self._parse_table(table, company_fields)
         self.log.info('Parsed company details from %s', self.response.url)
@@ -108,9 +108,9 @@ class DataScienceJobsSpider(CrawlSpider):
         if unscraped:
             self.log.warning('Not scraping %s', list(unscraped))
 
-        for key, item_label in expected_keys.items():
-            if item_label in keys:
-                self.loader.add_value(key, rows[item_label])
-                self.log.debug('Scraped %s = %s', key, rows[item_label])
+        for label, key in expected_keys.items():
+            if label in keys:
+                self.loader.add_value(key, rows[label])
+                self.log.debug('Scraped %s = %s', key, rows[label])
             else:
                 self.log.debug('%s is missing', key)
