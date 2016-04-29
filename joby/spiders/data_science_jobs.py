@@ -58,9 +58,8 @@ class DataScienceJobsSpider(CrawlSpider):
             'contact_person': "Contact Person",
             'contact_phone': 'Contact Phone',
         }
-
         self._parse_table(table, overview_fields)
-        self.log.info('Parsed company details from %s', self.response.url)
+        self.log.info('Parsed job overview from %s', self.response.url)
 
     def parse_job_details(self):
         self.loader.add_xpath('keywords', self.xbase + 'div[4]/div[2]/text()')
@@ -90,7 +89,7 @@ class DataScienceJobsSpider(CrawlSpider):
         self.log.info('Parsed webpage info from %s', self.response.url)
 
     def _parse_table(self, table, expected_keys):
-        self.log.info('Parsing the job overview table from %s', self.response.url)
+        self.log.info('Parsing table from %s', self.response.url)
 
         key_tags = table.find_all('td', class_='detailViewTableKey')
         value_tags = table.find_all('td', class_='detailViewTableValue')
@@ -104,8 +103,8 @@ class DataScienceJobsSpider(CrawlSpider):
         keys = map(extract, key_tags)
         values = map(extract, value_tags)
         rows = dict(zip(keys, values))
-
         unscraped = set(keys) - set(expected_keys.values())
+
         if unscraped:
             self.log.warning('Not scraping %s', list(unscraped))
 
