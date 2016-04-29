@@ -10,8 +10,7 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
 
-from os.path import join, abspath, expanduser
-
+from os.path import join, abspath, expanduser, dirname
 
 BOT_NAME = 'joby'
 
@@ -19,6 +18,8 @@ SPIDER_MODULES = ['joby.spiders']
 NEWSPIDER_MODULE = 'joby.spiders'
 
 DUPEFILTER_DEBUG = True
+
+TEST_ASSETS_DIR = abspath(join(dirname(__file__), 'tests', 'assets'))
 JSON_BUCKET = abspath(join(expanduser('~'), 'output', 'job-spiders', 'bucket.json'))
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

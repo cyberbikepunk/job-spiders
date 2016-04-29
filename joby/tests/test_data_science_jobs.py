@@ -1,73 +1,38 @@
 """ Test the data_science_jobs spider. """
 
 
-from joby.items import DataScienceJobsLoader, JobItem
+from os.path import join
+
+from bs4 import BeautifulSoup
+from scrapy import Request
+from scrapy.http import HtmlResponse
+
 from joby.spiders.data_science_jobs import DataScienceJobsSpider
+from joby.items import Job, JobLoader
+from joby.settings import TEST_ASSETS_DIR
 
 
 def test_parse_overview_table_():
-    html_table = """
-        <html>
-            <table class="detailViewTable">
-                <tr>
-                    <td class="detailViewTableKey">Category</td>
-                    <td class="detailViewTableValue">Business Analyst</td>
-                </tr>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Type</td>
-                    <td class="detailViewTableValue">Employee</td>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Workload</td>
-                    <td class="detailViewTableValue">full-time</td>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Duration</td>
-                    <td class="detailViewTableValue">unlimited</td>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Home Office</td>
-                    <td class="detailViewTableValue">negotiable</td>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Min. Budget</td>
-                    <td class="detailViewTableValue">70000&nbsp;EUR</td>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Contact E-Mail</td>
-                    <td class="detailViewTableValue">
-                        <a title="bla" href="javascript:_mailto('bla==','bla')" target="_blank">
-                           <img src="/detail/247/contact" alt="Applicant contact" border="0">
-                        </a>
-                    </td></td>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Contact Phone</td>
-                    <td class="detailViewTableValue">08954459111</td></td>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Reference ID</td>
-                    <td class="detailViewTableValue">OZA282636</td></td>
-                </tr>
-                <tr>
-                    <td class="detailViewTableKey">Age</td>
-                    <td class="detailViewTableValue">178 days</td></td>
-                </tr>
-            </table>
-        </html>
-    """
+    with open(join(TEST_ASSETS_DIR, 'data_science_job.html')) as test_file:
+        test_html = test_file.read()
 
-    fields = {
-        'job_category': 'Business Analyst',
-        'contact_phone': '08954459111',
-        'reference_id': 'OZA282636',
-        'days_since_posted': '178 days',
-        'salary': '70000&nbsp;EUR',
+    expected_fields = {
+        'job_category': 'Data Scientist',
+        'apply_url': 'https://mydis.dis-ag.com/kd_1/Registration.aspx?tID=1&lID=0{0}',
+        'days_since_posted': '453 days',
         'contract_type': 'Employee',
         'workload': 'full-time',
         'allows_remote': 'negotiable',
         'duration': 'unlimited',
     }
 
-    assert False
+    dummy_url = 'http://dummy.com'
+
+    spider = DataScienceJobsSpider()
+    spider.response = HtmlResponse(dummy_url, body=test_html, request=Request(url=dummy_url), encoding='utf-8')
+    spider.loader = JobLoader(item=Job(), response=spider.response)
+    spider.soup = BeautifulSoup(spider.response.body, spider.parser_engine)
+    spider.parse_job_overview()
+    spider.loader.load_item()
+
+    assert dict(spider.loader.item) == expected_fields
