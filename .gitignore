@@ -1,7 +1,12 @@
 /sys
 /credentials.yaml
 bucket.json
+joby/tests/cache/
 
+joby/__init__.pyc
+joby/settings.pyc
+joby/spiders/__init__.pyc
+	
 # Project specific
 # ----------------
 output/
