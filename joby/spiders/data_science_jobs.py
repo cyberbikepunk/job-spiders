@@ -87,7 +87,7 @@ class DataScienceJobsParser(Parser):
     X_KEYWORDS = X_BASE + 'div[4]/div[2]/text()'
     X_ABSTRACT = X_BASE + 'div[2]/div[2]/text()'
     X_DESCRIPTION = X_BASE + 'div[3]/div[2]/text()'
-    CSS_COMPANY_ADDRESS = 'tr>td>address'
+    CSS_COMPANY_ADDRESS = 'tr>td>address::text'
 
     def parse_job_overview(self):
         table = self.soup.find('table', class_='detailViewTable')
