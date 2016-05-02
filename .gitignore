@@ -1,4 +1,4 @@
-joby/tests/cache/
+joby/tests/cache/*
 
 # Project specific
 # ----------------
