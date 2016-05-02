@@ -22,6 +22,18 @@ class DataScienceJobsSpider(CrawlSpider):
 
     # noinspection PyUnresolvedReferences
     def parse_job(self, response):
+        """ Parses all Job item fields.
+
+        @url        http://www.data-science-jobs.com/detail/20
+        @returns    items 1 16
+        @returns    requests 0 0
+
+        @scrapes    website_url website_job_id job_url job_title
+        @scrapes    keywords description abstract
+        @scrapes    company_name company_address company_description company_url
+        @scrapes    publication_date
+
+        """
         loader = JobLoader(item=Job(), response=response)
         parser = DataScienceJobsJobParser(response, job=loader)
 
