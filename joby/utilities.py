@@ -8,7 +8,8 @@ class Parser(object):
     parser_engine = 'lxml'
     encoding = 'utf-8'
 
-    def __init__(self, response, **loaders):
+    def __init__(self, spider, response, **loaders):
+        self.spider = spider
         self.response = response
         self.soup = BeautifulSoup(response.body, self.parser_engine)
 

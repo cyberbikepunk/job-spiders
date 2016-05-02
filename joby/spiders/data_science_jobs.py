@@ -67,7 +67,7 @@ class DataScienceJobsSpider(CrawlSpider):
 
         """
         loader = JobLoader(item=Job(), response=response)
-        parser = DataScienceJobsJobParser(response, job=loader)
+        parser = DataScienceJobsJobParser(self, response, job=loader)
 
         parser.parse_job_overview()
         parser.parse_job_details()
