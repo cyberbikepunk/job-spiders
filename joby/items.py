@@ -8,7 +8,7 @@
 
 from scrapy import Item, Field
 from scrapy.loader import Identity, ItemLoader
-from scrapy.loader.processors import TakeFirst
+from scrapy.loader.processors import Join
 
 
 class Job(Item):
@@ -63,4 +63,4 @@ class Job(Item):
 
 class JobLoader(ItemLoader):
     default_input_processor = Identity()
-    default_output_processor = TakeFirst()
+    default_output_processor = Join()
