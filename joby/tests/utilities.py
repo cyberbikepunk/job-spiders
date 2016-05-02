@@ -52,6 +52,7 @@ def make_offline_parser(module_name, base_class_name, url, *loaders):
                 raise WebpageCachingError('Cannot download %s (%s)' % (self.url, response.status_code))
             else:
                 with open(self.filepath, 'w+', response.encoding) as cache:
+                    cache.write('<!-- ' + response.url + ' -->' + '\n')
                     cache.write(response.text)
 
         def __repr__(self):
