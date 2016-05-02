@@ -67,7 +67,7 @@ class DataScienceJobsSpider(CrawlSpider):
 
         """
         loader = JobLoader(item=Job(), response=response)
-        parser = DataScienceJobsJobParser(self, response, job=loader)
+        parser = DataScienceJobsParser(self, response, job=loader)
 
         parser.parse_job_overview()
         parser.parse_job_details()
@@ -81,7 +81,7 @@ class DataScienceJobsSpider(CrawlSpider):
 
 
 # noinspection PyUnresolvedReferences
-class DataScienceJobsJobParser(Parser):
+class DataScienceJobsParser(Parser):
     X_BASE = '//div[@id="detailView"]/'
     X_TTILE = X_BASE + '/h1/text()'
     X_KEYWORDS = X_BASE + 'div[4]/div[2]/text()'
