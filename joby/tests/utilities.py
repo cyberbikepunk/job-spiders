@@ -16,7 +16,7 @@ class WebpageCachingError(Exception):
 
 
 # noinspection PyUnusedLocal
-def make_offline_parser(module_name, base_class_name, url, *loaders):
+def make_offline_parser(spider, module_name, base_class_name, url, *loaders):
     module = import_module('joby.spiders.' + module_name)
     base_class = getattr(module, base_class_name)
 
@@ -31,7 +31,7 @@ def make_offline_parser(module_name, base_class_name, url, *loaders):
             self.response = HtmlResponse(self.url, body=self.html, request=self.request)
             self.loaders = self._assign_loaders(loaders)
 
-            super(OfflineParser, self).__init__(self.response, **self.loaders)
+            super(OfflineParser, self).__init__(spider, self.response, **self.loaders)
 
         def _assign_loaders(self, loader_info):
             loaders = {}

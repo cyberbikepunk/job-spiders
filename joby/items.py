@@ -8,7 +8,7 @@
 
 from scrapy import Item, Field
 from scrapy.loader import Identity, ItemLoader
-from scrapy.loader.processors import Join
+from scrapy.loader.processors import Join, TakeFirst
 
 
 class Job(Item):
@@ -29,7 +29,7 @@ class Job(Item):
     contact_phone = Field()
     apply_url = Field()
 
-    job_category = Field()
+    job_category = Field(output_processor=TakeFirst())
     contract_type = Field()
     workload = Field()
     duration = Field()

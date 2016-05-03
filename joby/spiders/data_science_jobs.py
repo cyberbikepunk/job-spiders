@@ -32,7 +32,7 @@ class DataScienceJobsSpider(CrawlSpider):
         --------------------
         @scrapes reference_id
         @scrapes apply_url
-        @scrapes job_category
+        @pipeline job_category         Data Scientist
         @scrapes contract_type
         @scrapes allows_remote
         @scrapes workload duration

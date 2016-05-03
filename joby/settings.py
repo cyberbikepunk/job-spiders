@@ -72,6 +72,10 @@ ITEM_PIPELINES = {
     'joby.pipelines.JsonWriterPipeline': 300,
 }
 
+SPIDER_CONTRACTS = {
+    'joby.contracts.ProcessingContract': 10,
+}
+
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
 # NOTE: AutoThrottle will honour the standard settings for concurrency and delay
